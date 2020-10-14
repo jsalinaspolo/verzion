@@ -59,13 +59,3 @@ func versionCmd() *cobra.Command {
 	return cmd
 }
 
-//var usage = func() {
-//	var help = "%s\n      - From tags: %s\n      - From packed tags: %s\n      - From VERSION file: %s\n      - Zersion will output: %s\n%s\n\n"
-//	f, _ := zersion.FromFileTags(".")
-//	p, _ := zersion.FromPackedRefs(".")
-//	v, _ := zersion.FromFile("VERSION")
-//	z := findVersion(false, false, false, false, "")
-//	fmt.Fprintf(flag.CommandLine.Output(), help, help1, f, p, v, z, help2)
-//	flag.PrintDefaults()
-//	os.Exit(0)
-//}
