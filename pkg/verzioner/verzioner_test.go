@@ -12,16 +12,16 @@ import (
 
 func TestFindVersion(t *testing.T) {
 	t.Run("should increase path for zero verzion when empty repository", func(t *testing.T) {
-		v := FindVersion(false, RepositoryPath{Path: os.TempDir()})
+		v := FindVersion(false, RepositoryPath{Path: t.TempDir()})
 		require.Equal(t, v, "0.0.1")
 	})
 
 	t.Run("should get current version based on latest tags ", func(t *testing.T) {
 		input := []byte(`078174542934ec4907a66cf334ed4c4eee744fa9`)
+		tempDir := t.TempDir()
 
-		folder := filepath.Join(os.TempDir(), ".git", "refs", "tags")
+		folder := filepath.Join(tempDir, ".git", "refs", "tags")
 		os.MkdirAll(folder, os.ModePerm)
-		defer os.RemoveAll(folder)
 
 		for i := 1; i < 10; i++ {
 			tmpFile := filepath.Join(folder, fmt.Sprintf("v1.%d.0", i))
@@ -29,21 +29,21 @@ func TestFindVersion(t *testing.T) {
 			require.NoError(t, err)
 		}
 
-		v := FindVersion(false, RepositoryPath{Path: os.TempDir()})
-		assert.Equal(t, v, "1.9.1")
+		v := FindVersion(false, RepositoryPath{Path: tempDir})
+		assert.Equal(t,  "1.9.1", v)
 	})
 
 	t.Run("should get current zero verzion when empty repository", func(t *testing.T) {
-		v := FindVersion(true, RepositoryPath{Path: os.TempDir()})
-		require.Equal(t, v, "0.0.0")
+		v := FindVersion(true, RepositoryPath{Path: t.TempDir()})
+		require.Equal(t, "0.0.0", v)
 	})
 
 	t.Run("should get next version based on latest  tags", func(t *testing.T) {
 		input := []byte(`078174542934ec4907a66cf334ed4c4eee744fa9`)
+		tempDir := t.TempDir()
 
-		folder := filepath.Join(os.TempDir(), ".git", "refs", "tags")
+		folder := filepath.Join(tempDir, ".git", "refs", "tags")
 		os.MkdirAll(folder, os.ModePerm)
-		defer os.RemoveAll(folder)
 
 		for i := 1; i < 10; i++ {
 			tmpFile := filepath.Join(folder, fmt.Sprintf("v1.%d.2", i))
@@ -51,21 +51,20 @@ func TestFindVersion(t *testing.T) {
 			require.NoError(t, err)
 		}
 
-		v := FindVersion(true, RepositoryPath{Path: os.TempDir()})
+		v := FindVersion(true, RepositoryPath{Path: tempDir})
 		require.Equal(t, "1.9.2", v)
 	})
 
 	t.Run("should use VERSION if bigger than tag", func(t *testing.T) {
 		input := []byte(`078174542934ec4907a66cf334ed4c4eee744fa9`)
+		tempDir := t.TempDir()
 
-		folder := filepath.Join(os.TempDir(), ".git", "refs", "tags")
+		folder := filepath.Join(tempDir, ".git", "refs", "tags")
 		os.MkdirAll(folder, os.ModePerm)
-		defer os.RemoveAll(folder)
 
-		versionFile := filepath.Join(os.TempDir(), "VERSION")
+		versionFile := filepath.Join(tempDir, "VERSION")
 
 		err := ioutil.WriteFile(versionFile, []byte(`2.1`), 0666)
-		defer os.Remove(versionFile)
 		require.NoError(t, err)
 
 		for i := 1; i < 10; i++ {
@@ -74,7 +73,7 @@ func TestFindVersion(t *testing.T) {
 			require.NoError(t, err)
 		}
 
-		v := FindVersion(false, RepositoryPath{Path: os.TempDir()})
+		v := FindVersion(false, RepositoryPath{Path: tempDir})
 		require.Equal(t, "2.1.0", v)
 	})
 }

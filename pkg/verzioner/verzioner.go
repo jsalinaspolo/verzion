@@ -28,7 +28,7 @@ func FindVersion(current bool, repoPath RepositoryPath) string {
 	}
 
 	// Parse a version from the VERSION file.
-	fileVersion, _ := verzion.FromFile(repoPath.Path+"VERSION")
+	fileVersion, _ := verzion.FromFile(repoPath.Path+"/VERSION")
 
 	// Ignore any patch number in the VERSION file.
 	fileVersion.Patch = 0

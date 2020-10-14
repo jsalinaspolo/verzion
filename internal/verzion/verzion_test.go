@@ -3,7 +3,6 @@ package verzion
 import (
 	"fmt"
 	"io/ioutil"
-	"os"
 	"path/filepath"
 	"testing"
 
@@ -114,10 +113,9 @@ func TestVerzion_String(t *testing.T) {
 func TestFromFile(t *testing.T) {
 	input := []byte(`1.2.3`)
 
-	tmpFile := filepath.Join(os.TempDir(), "VERSION")
+	tmpFile := filepath.Join(t.TempDir(), "VERSION")
 
 	err := ioutil.WriteFile(tmpFile, input, 0666)
-	defer os.Remove(tmpFile)
 
 	require.NoError(t, err)
 	v, err := FromFile(tmpFile)
