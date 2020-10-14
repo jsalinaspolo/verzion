@@ -2,8 +2,9 @@ package cmd
 
 import (
 	"fmt"
-	"github.com/jsalinaspolo/verzion/pkg/verzion"
-	"github.com/jsalinaspolo/verzion/zersion"
+	"github.com/jsalinaspolo/verzion/internal/git"
+	"github.com/jsalinaspolo/verzion/internal/verzion"
+	"github.com/jsalinaspolo/verzion/pkg/verzioner"
 	"github.com/spf13/cobra"
 	"github.com/spf13/viper"
 )
@@ -29,10 +30,10 @@ var help2 = `
 
 var helpMessage = func() string {
 	var help = "%s\n      - From tags: %s\n      - From packed tags: %s\n      - From VERSION file: %s\n      - Zersion will output: %s\n%s\n\n"
-	f, _ := zersion.FromFileTags(".")
-	p, _ := zersion.FromPackedRefs(".")
-	v, _ := zersion.FromFile("VERSION")
-	z := verzion.FindVersion(false, verzion.RepositoryPath{})
+	f, _ := verzion.FromFile(".")
+	p, _ := git.FromPackedRefs(".")
+	v, _ := verzion.FromFile("VERSION")
+	z := verzioner.FindVersion(false, verzioner.RepositoryPath{})
 	return fmt.Sprintf(help, help1, f, p, v, z, help2)
 }
 
@@ -48,7 +49,7 @@ func versionCmd() *cobra.Command {
 		Run: func(cmd *cobra.Command, args []string) {
 			c := viper.Get(currentFlag).(bool)
 
-			v := verzion.FindVersion(c, verzion.RepositoryPath{})
+			v := verzioner.FindVersion(c, verzioner.RepositoryPath{})
 			fmt.Println(v)
 		},
 	}
@@ -58,4 +59,3 @@ func versionCmd() *cobra.Command {
 	cmd.SetHelpTemplate(helpMessage())
 	return cmd
 }
-
