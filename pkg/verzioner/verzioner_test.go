@@ -52,7 +52,7 @@ func TestFindVersion(t *testing.T) {
 		}
 
 		v := FindVersion(true, RepositoryPath{Path: os.TempDir()})
-		require.Equal(t, v, "1.9.2")
+		require.Equal(t, "1.9.2", v)
 	})
 
 	t.Run("should use VERSION if bigger than tag", func(t *testing.T) {
