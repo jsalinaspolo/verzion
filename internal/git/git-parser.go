@@ -98,13 +98,13 @@ func FindTagByHash(repoPath string, hash string) (verzion.Verzion, error) {
 				tagVersions = append(tagVersions, tag)
 			}
 		}
-
-		if len(tagVersions) == 0 {
-			return verzion.Verzion{}, fmt.Errorf("could not find any tag with the hash `%s`", hash)
-		}
-
-		sort.Stable(tagVersions)
 	}
+
+	if len(tagVersions) == 0 {
+		return verzion.Verzion{}, fmt.Errorf("could not find any tag with the hash `%s`", hash)
+	}
+
+	sort.Stable(tagVersions)
 	return tagVersions[len(tagVersions)-1].Version, nil
 }
 

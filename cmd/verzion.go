@@ -33,7 +33,7 @@ var helpMessage = func() string {
 	f, _ := verzion.FromFile(".")
 	p, _ := git.FromPackedRefs(".")
 	v, _ := verzion.FromFile("VERSION")
-	z := verzioner.FindVersion(false, verzioner.RepositoryPath{})
+	z, _ := verzioner.FindVersion(false, verzioner.RepositoryPath{})
 	return fmt.Sprintf(help, help1, f, p, v, z, help2)
 }
 
@@ -46,11 +46,15 @@ func versionCmd() *cobra.Command {
 		PreRun: func(cmd *cobra.Command, args []string) {
 			_ = viper.BindPFlag(currentFlag, cmd.Flags().Lookup(currentFlag))
 		},
-		Run: func(cmd *cobra.Command, args []string) {
+		RunE: func(cmd *cobra.Command, args []string) error {
 			c := viper.Get(currentFlag).(bool)
 
-			v := verzioner.FindVersion(c, verzioner.RepositoryPath{})
+			v, err := verzioner.FindVersion(c, verzioner.RepositoryPath{})
+			if err != nil {
+				return err
+			}
 			fmt.Println(v)
+			return nil
 		},
 	}
 

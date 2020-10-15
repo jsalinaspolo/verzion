@@ -2,6 +2,7 @@ package verzioner
 
 import (
 	"fmt"
+	"github.com/jsalinaspolo/verzion/internal/git"
 	"io/ioutil"
 	"os"
 	"path/filepath"
@@ -12,8 +13,13 @@ import (
 )
 
 func TestFindVersion(t *testing.T) {
+	tempDir := t.TempDir()
+	git.StubHead(t, tempDir, []byte(`7a9d0ca3e6e684ca2f35197511e0290496d94215`))
+
 	t.Run("should increase path for zero verzion when empty repository", func(t *testing.T) {
-		v := FindVersion(false, RepositoryPath{Path: t.TempDir()})
+		v, err := FindVersion(false, RepositoryPath{Path: t.TempDir()})
+
+		require.NoError(t, err)
 		require.Equal(t, "0.0.1", v)
 	})
 
@@ -30,12 +36,14 @@ func TestFindVersion(t *testing.T) {
 			require.NoError(t, err)
 		}
 
-		v := FindVersion(false, RepositoryPath{Path: tempDir})
+		v, err := FindVersion(false, RepositoryPath{Path: tempDir})
+		require.NoError(t, err)
 		assert.Equal(t, "1.9.1", v)
 	})
 
 	t.Run("should get current zero verzion when empty repository", func(t *testing.T) {
-		v := FindVersion(true, RepositoryPath{Path: t.TempDir()})
+		v, err := FindVersion(true, RepositoryPath{Path: t.TempDir()})
+		require.NoError(t, err)
 		require.Equal(t, "0.0.0", v)
 	})
 
@@ -52,7 +60,9 @@ func TestFindVersion(t *testing.T) {
 			require.NoError(t, err)
 		}
 
-		v := FindVersion(true, RepositoryPath{Path: tempDir})
+		v, err := FindVersion(true, RepositoryPath{Path: tempDir})
+
+		require.NoError(t, err)
 		require.Equal(t, "1.9.2", v)
 	})
 
@@ -74,7 +84,8 @@ func TestFindVersion(t *testing.T) {
 			require.NoError(t, err)
 		}
 
-		v := FindVersion(false, RepositoryPath{Path: tempDir})
+		v, err := FindVersion(false, RepositoryPath{Path: tempDir})
+		require.NoError(t, err)
 		require.Equal(t, "2.1.0", v)
 	})
 }

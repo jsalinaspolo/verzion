@@ -12,14 +12,18 @@ type RepositoryPath struct {
 
 // findVersion encapsulates the logic of verzion.
 // This function ignores errors. For our use case, we always want to print a version,
-func FindVersion(current bool, repoPath RepositoryPath) string {
-	fileTagVersion, _ := git.FromFileTags(repoPath.Path)
+func FindVersion(current bool, repoPath RepositoryPath) (string, error) {
+	commitHash, _ := git.FindLatestCommit(repoPath.Path)
+	tagVersion, err := git.FindTagByHash(repoPath.Path, commitHash)
 
-	// Only check packed refs if there's no file tags.
-	tagVersion := fileTagVersion
-	if tagVersion.Equal(verzion.Zero) {
-		packedVersion, _ := git.FromPackedRefs(repoPath.Path)
-		tagVersion = packedVersion
+	if err != nil {
+		fileTagVersion, _ := git.FromFileTags(repoPath.Path)
+		// Only check packed refs if there's no file tags.
+		tagVersion = fileTagVersion
+		if tagVersion.Equal(verzion.Zero) {
+			packedVersion, _ := git.FromPackedRefs(repoPath.Path)
+			tagVersion = packedVersion
+		}
 	}
 
 	// Increment the patch version of our last tag (unless `-c` is set).
@@ -28,7 +32,7 @@ func FindVersion(current bool, repoPath RepositoryPath) string {
 	}
 
 	// Parse a version from the VERSION file.
-	fileVersion, _ := verzion.FromFile(repoPath.Path+"/VERSION")
+	fileVersion, _ := verzion.FromFile(repoPath.Path + "/VERSION")
 
 	// Ignore any patch number in the VERSION file.
 	fileVersion.Patch = 0
@@ -42,12 +46,11 @@ func FindVersion(current bool, repoPath RepositoryPath) string {
 	// If there are no tagged versions, return the VERSION file content or 0.0.0.
 	if current {
 		if tagVersion.Equal(verzion.Zero) {
-			return latestVersion.String()
+			return latestVersion.String(), nil
 		}
 
-		return tagVersion.String()
+		return tagVersion.String(), nil
 	}
 
-	return latestVersion.String()
+	return latestVersion.String(), nil
 }
-
