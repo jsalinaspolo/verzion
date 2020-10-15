@@ -1,3 +1,7 @@
+[![Actions Status](https://github.com/jsalinaspolo/verzion/workflows/Test/badge.svg)](https://github.com/jsalinaspolo/verzion/actions)
+[![codecov](https://codecov.io/gh/jsalinaspolo/verzion/branch/main/graph/badge.svg)](https://codecov.io/gh/jsalinaspolo/verzion)
+
+
 # `verzion`
 Verzion prints out the next version to release.
 The main documentation is embedded in the binary. `verzion -h`
