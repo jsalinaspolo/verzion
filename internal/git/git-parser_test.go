@@ -128,3 +128,31 @@ func TestFindTagByHash(t *testing.T) {
 		require.EqualError(t, err, fmt.Sprintf("could not find any tag with the hash `%s`", hash))
 	})
 }
+
+func TestFindLatestCommit(t *testing.T) {
+	t.Run("should find latest commit when detach HEAD", func(t *testing.T) {
+		tempDir := t.TempDir()
+		StubHead(t, tempDir, []byte(`7a9d0ca3e6e684ca2f35197511e0290496d94215`))
+
+		latestCommit, err := FindLatestCommit(tempDir)
+		require.NoError(t, err)
+		require.Equal(t, "7a9d0ca3e6e684ca2f35197511e0290496d94215", latestCommit)
+	})
+
+	t.Run("should resolve when not detach HEAD", func(t *testing.T) {
+		tempDir := t.TempDir()
+		StubHead(t, tempDir, []byte(`ref: refs/heads/a-branch`))
+		StubRefsHead(t, tempDir, "a-branch", []byte(`7a9d0ca3e6e684ca2f35197511e0290496d94215`))
+
+		latestCommit, err := FindLatestCommit(tempDir)
+		require.NoError(t, err)
+		require.Equal(t, "7a9d0ca3e6e684ca2f35197511e0290496d94215", latestCommit)
+
+	})
+
+	t.Run("should fail if HEAD does not exists", func(t *testing.T) {
+		tempDir := t.TempDir()
+		_, err := FindLatestCommit(tempDir)
+		require.Error(t, err)
+	})
+}

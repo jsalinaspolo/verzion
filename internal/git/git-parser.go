@@ -107,3 +107,25 @@ func FindTagByHash(repoPath string, hash string) (verzion.Verzion, error) {
 	}
 	return tagVersions[len(tagVersions)-1].Version, nil
 }
+
+// FindLatestCommit determine the latest commit sha
+func FindLatestCommit(repoPath string) (string, error) {
+	c, err := ioutil.ReadFile(filepath.Join(repoPath, ".git", "HEAD"))
+	if err != nil {
+		return "", err
+	}
+
+	content := string(c)
+
+	// If is not detach, extract reference
+	if strings.HasPrefix(content, "ref:") {
+		ref := strings.TrimPrefix(content, "ref: ")
+		c, err := ioutil.ReadFile(filepath.Join(repoPath, ".git", ref))
+		if err != nil {
+			return "", err
+		}
+		return string(c), nil
+	}
+
+	return content, nil
+}

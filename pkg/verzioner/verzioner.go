@@ -10,11 +10,8 @@ type RepositoryPath struct {
 	Path string `default:"."`
 }
 
-func DetermineVersion(repoPath RepositoryPath) string {
-
-}
 // findVersion encapsulates the logic of verzion.
-// This function igores errors. For our use case, we always want to print a version,
+// This function ignores errors. For our use case, we always want to print a version,
 func FindVersion(current bool, repoPath RepositoryPath) string {
 	fileTagVersion, _ := git.FromFileTags(repoPath.Path)
 

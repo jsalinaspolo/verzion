@@ -9,6 +9,22 @@ import (
 	"testing"
 )
 
+func StubHead(t *testing.T, tempDir string, input []byte) {
+	folder := filepath.Join(tempDir, ".git")
+	os.MkdirAll(folder, os.ModePerm)
+	tmpFile := filepath.Join(folder, "HEAD")
+	err := ioutil.WriteFile(tmpFile, input, 0666)
+	require.NoError(t, err)
+}
+
+func StubRefsHead(t *testing.T, tempDir string, branch string, input []byte) {
+	folder := filepath.Join(tempDir, ".git", "refs", "heads")
+	os.MkdirAll(folder, os.ModePerm)
+	tmpFile := filepath.Join(folder, branch)
+	err := ioutil.WriteFile(tmpFile, input, 0666)
+	require.NoError(t, err)
+}
+
 func StubRefsTags(t *testing.T, tempDir string, tags []Tag) {
 	t.Helper()
 	input := []byte(`078174542934ec4907a66cf334ed4c4eee744fa9`)
