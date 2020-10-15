@@ -2,18 +2,19 @@ package verzioner
 
 import (
 	"fmt"
-	"github.com/stretchr/testify/assert"
-	"github.com/stretchr/testify/require"
 	"io/ioutil"
 	"os"
 	"path/filepath"
 	"testing"
+
+	"github.com/stretchr/testify/assert"
+	"github.com/stretchr/testify/require"
 )
 
 func TestFindVersion(t *testing.T) {
 	t.Run("should increase path for zero verzion when empty repository", func(t *testing.T) {
 		v := FindVersion(false, RepositoryPath{Path: t.TempDir()})
-		require.Equal(t, v, "0.0.1")
+		require.Equal(t, "0.0.1", v)
 	})
 
 	t.Run("should get current version based on latest tags ", func(t *testing.T) {
@@ -30,7 +31,7 @@ func TestFindVersion(t *testing.T) {
 		}
 
 		v := FindVersion(false, RepositoryPath{Path: tempDir})
-		assert.Equal(t,  "1.9.1", v)
+		assert.Equal(t, "1.9.1", v)
 	})
 
 	t.Run("should get current zero verzion when empty repository", func(t *testing.T) {

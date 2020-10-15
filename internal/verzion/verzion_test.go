@@ -6,8 +6,6 @@ import (
 	"path/filepath"
 	"testing"
 
-	"github.com/stretchr/testify/assert"
-
 	"github.com/stretchr/testify/require"
 )
 
@@ -31,7 +29,7 @@ func TestFromString(t *testing.T) {
 		for _, test := range tests {
 			v, err := FromString(test.input)
 			require.NoError(t, err)
-			assert.Equal(t, v, test.expected)
+			require.Equal(t, test.expected, v)
 		}
 	})
 
@@ -107,7 +105,7 @@ func TestVerzion_Equal(t *testing.T) {
 
 func TestVerzion_String(t *testing.T) {
 	v := Verzion{1, 2, 3, "d43d0dc"}
-	require.Equal(t, v.String(), "1.2.3-d43d0dc")
+	require.Equal(t, "1.2.3-d43d0dc", v.String())
 }
 
 func TestFromFile(t *testing.T) {
@@ -120,5 +118,5 @@ func TestFromFile(t *testing.T) {
 	require.NoError(t, err)
 	v, err := FromFile(tmpFile)
 	require.NoError(t, err)
-	require.Equal(t, v, Verzion{Major: 1, Minor: 2, Patch: 3})
+	require.Equal(t, Verzion{Major: 1, Minor: 2, Patch: 3}, v)
 }
