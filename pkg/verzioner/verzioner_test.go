@@ -1,8 +1,6 @@
 package verzioner
 
 import (
-	"io/ioutil"
-	"path/filepath"
 	"testing"
 
 	"github.com/jsalinaspolo/verzion/internal/git"
@@ -74,10 +72,7 @@ func TestFindVersion(t *testing.T) {
 		tags = append(tags, git.Tag{Hash: "222", Version: verzion.Verzion{Major: 1, Minor: 2}})
 		tags = append(tags, git.Tag{Hash: "333", Version: verzion.Verzion{Major: 1, Minor: 3}})
 		git.StubRefsTags(t, tempDir, tags)
-
-		versionFile := filepath.Join(tempDir, "VERSION")
-		err := ioutil.WriteFile(versionFile, []byte(`2.1`), 0666)
-		require.NoError(t, err)
+		git.StubVersion(t, tempDir, "2.1")
 
 		v, err := FindVersion(false, RepositoryPath{Path: tempDir})
 		require.NoError(t, err)

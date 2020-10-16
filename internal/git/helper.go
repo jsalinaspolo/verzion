@@ -44,8 +44,14 @@ func StubRefsTags(t *testing.T, tempDir string, tags []Tag) {
 			err := ioutil.WriteFile(tmpFile, input, 0666)
 			require.NoError(t, err)
 		}
-
 	}
+}
+
+func StubVersion(t *testing.T, tempDir string, version string) {
+	t.Helper()
+	versionFile := filepath.Join(tempDir, "VERSION")
+	err := ioutil.WriteFile(versionFile, []byte(version), 0666)
+	require.NoError(t, err)
 }
 
 func StubPackedRefs(t *testing.T, tempDir string) {
