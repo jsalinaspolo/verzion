@@ -10,10 +10,10 @@ import (
 
 // Verzion is a semantic version, allowing suffix.
 type Verzion struct {
-	Major  int
-	Minor  int
-	Patch  int
-	Suffix string
+	Major    int
+	Minor    int
+	Patch    int
+	Metadata string
 }
 
 // Zero is the Zero Verzion
@@ -42,8 +42,8 @@ func (v Verzion) Equal(cmp Verzion) bool {
 // String prints the Verzion to a string.
 func (z Verzion) String() string {
 	s := fmt.Sprintf("%d.%d.%d", z.Major, z.Minor, z.Patch)
-	if len(strings.TrimSpace(z.Suffix)) > 0 {
-		return s + "-" + z.Suffix
+	if len(strings.TrimSpace(z.Metadata)) > 0 {
+		return s + "+" + z.Metadata
 	}
 	return s
 }
@@ -76,9 +76,9 @@ func FromString(s string) (Verzion, error) {
 	patch, _ := strconv.Atoi(parts[4])
 
 	return Verzion{
-		Major:  maj,
-		Minor:  min,
-		Patch:  patch,
-		Suffix: parts[5],
+		Major:    maj,
+		Minor:    min,
+		Patch:    patch,
+		Metadata: parts[5],
 	}, nil
 }

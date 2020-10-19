@@ -129,3 +129,15 @@ func FindLatestCommit(repoPath string) (string, error) {
 
 	return content, nil
 }
+
+func FindShortCommitSha(path string) (string, error) {
+	hash, err := FindLatestCommit(path)
+	if err != nil {
+		return "", err
+	}
+
+	if len(hash) > 7 {
+		hash = hash[:7]
+	}
+	return hash, nil
+}

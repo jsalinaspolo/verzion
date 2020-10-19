@@ -156,3 +156,14 @@ func TestFindLatestCommit(t *testing.T) {
 		require.Error(t, err)
 	})
 }
+
+func TestAddCommitSha(t *testing.T) {
+	t.Run("should add short commit sha", func(t *testing.T) {
+		tempDir := t.TempDir()
+		StubHead(t, tempDir, []byte(`7a9d0ca3e6e684ca2f35197511e0290496d94215`))
+
+		shortCommitSha, err := FindShortCommitSha(tempDir)
+		require.NoError(t, err)
+		require.Equal(t, "7a9d0ca", shortCommitSha)
+	})
+}

@@ -105,7 +105,7 @@ func TestVerzion_Equal(t *testing.T) {
 
 func TestVerzion_String(t *testing.T) {
 	v := Verzion{1, 2, 3, "d43d0dc"}
-	require.Equal(t, "1.2.3-d43d0dc", v.String())
+	require.Equal(t, "1.2.3+d43d0dc", v.String())
 }
 
 func TestFromFile(t *testing.T) {

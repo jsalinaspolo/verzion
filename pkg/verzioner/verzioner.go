@@ -4,6 +4,7 @@ import (
 	"github.com/jsalinaspolo/verzion/internal/git"
 	"github.com/jsalinaspolo/verzion/internal/verzion"
 	"sort"
+	"strings"
 )
 
 type RepositoryPath struct {
@@ -12,7 +13,7 @@ type RepositoryPath struct {
 
 // findVersion encapsulates the logic of verzion.
 // This function ignores errors. For our use case, we always want to print a version,
-func FindVersion(current bool, repoPath RepositoryPath) (string, error) {
+func FindVersion(current bool, sha bool, repoPath RepositoryPath) (string, error) {
 	commitHash, _ := git.FindLatestCommit(repoPath.Path)
 	tagVersion, err := git.FindTagByHash(repoPath.Path, commitHash)
 
@@ -52,5 +53,13 @@ func FindVersion(current bool, repoPath RepositoryPath) (string, error) {
 		return tagVersion.String(), nil
 	}
 
+	var metadata []string
+	// Add sha flag.
+	if sha {
+		sha, _ := git.FindShortCommitSha(repoPath.Path)
+		metadata = append(metadata, sha)
+	}
+
+	latestVersion.Metadata = strings.Join(metadata, ".")
 	return latestVersion.String(), nil
 }
