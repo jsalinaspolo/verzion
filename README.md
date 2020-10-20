@@ -23,7 +23,7 @@ $ verzion -h
   and prints out a sensible semantic version (https://semver.org).
 
 * Verzions are printed in the following format:
-  [Major].[Minor].[Patch]-[Branch]-[Misc]-[Sha]
+  [Major].[Minor].[Patch]+[Sha]
 
 * Your VERSION file should be in the format [Major].[Minor]
   Patch numbers in VERSION files are ignored.
@@ -34,5 +34,6 @@ $ verzion -h
 * By default, prints next release version incrementing patch number.
 
   -c	print without incrementing the patch version. Overrides all other flags.
+  -s    append the current commit sha.
   -v	print the version of Verzion itself.
 ```

@@ -56,7 +56,10 @@ func FindVersion(current bool, sha bool, repoPath RepositoryPath) (string, error
 	var metadata []string
 	// Add sha flag.
 	if sha {
-		sha, _ := git.FindShortCommitSha(repoPath.Path)
+		sha, err := git.FindShortCommitSha(repoPath.Path)
+		if err != nil {
+			return "", err
+		}
 		metadata = append(metadata, sha)
 	}
 

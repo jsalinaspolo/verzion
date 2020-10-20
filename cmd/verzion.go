@@ -23,7 +23,7 @@ var help2 = `
   To print the current version instead, use 'zersion -c'.
 
 * Zersions are printed in the following format:
-  [Major].[Minor].[Patch]-[Branch]-[Misc]-[Sha]
+  [Major].[Minor].[Patch]+[Sha]
 
 * Your VERSION file should be in the format [Major].[Minor]
   Patch numbers in VERSION files are ignored.`
@@ -46,6 +46,7 @@ func versionCmd() *cobra.Command {
 		Short: "Prints the CLI version",
 		PreRun: func(cmd *cobra.Command, args []string) {
 			_ = viper.BindPFlag(currentFlag, cmd.Flags().Lookup(currentFlag))
+			_ = viper.BindPFlag(shaFlag, cmd.Flags().Lookup(shaFlag))
 		},
 		RunE: func(cmd *cobra.Command, args []string) error {
 			c := viper.Get(currentFlag).(bool)
