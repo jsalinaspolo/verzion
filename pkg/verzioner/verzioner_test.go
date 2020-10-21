@@ -59,7 +59,7 @@ func TestFindVersion(t *testing.T) {
 		require.Equal(t, "1.3.1", v)
 	})
 
-	t.Run("should get next version based on latest commit tag", func(t *testing.T) {
+	t.Run("should use tag version if commit matches the tag", func(t *testing.T) {
 		tempDir := before(t)
 		var tags []git.Tag
 		tags = append(tags, git.Tag{Hash: "111", Version: verzion.Verzion{Major: 1, Minor: 4}})
@@ -69,7 +69,7 @@ func TestFindVersion(t *testing.T) {
 
 		git.StubRefsTags(t, tempDir, tags)
 
-		v, err := FindVersion(true, false, false, RepositoryPath{Path: tempDir})
+		v, err := FindVersion(false, false, false, RepositoryPath{Path: tempDir})
 
 		require.NoError(t, err)
 		require.Equal(t, "1.2.3", v)

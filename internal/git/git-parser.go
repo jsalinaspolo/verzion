@@ -2,11 +2,12 @@ package git
 
 import (
 	"fmt"
-	"github.com/jsalinaspolo/verzion/internal/verzion"
 	"io/ioutil"
 	"path/filepath"
 	"sort"
 	"strings"
+
+	"github.com/jsalinaspolo/verzion/internal/verzion"
 )
 
 type Tag struct {
@@ -78,25 +79,27 @@ func parseRefsTags(repoPath string) (verzion.Slice, error) {
 
 // FindTagByHsh returns the tag version if the commit hash has a tag
 func FindTagByHash(repoPath string, hash string) (verzion.Verzion, error) {
-	tagVersions := Slice{}
 	gitRefsTagPath := filepath.Join(repoPath, ".git", "refs", "tags")
+	fileTags, err := ioutil.ReadDir(gitRefsTagPath)
+	if err != nil {
+		return verzion.Verzion{}, err
+	}
 
-	if fileTags, err := ioutil.ReadDir(gitRefsTagPath); err == nil {
-		for _, file := range fileTags {
-			content, err := ioutil.ReadFile(filepath.Join(gitRefsTagPath, file.Name()))
-			if err != nil {
-				continue
-			}
+	tagVersions := Slice{}
+	for _, file := range fileTags {
+		content, err := ioutil.ReadFile(filepath.Join(gitRefsTagPath, file.Name()))
+		if err != nil {
+			continue
+		}
 
-			v, err := verzion.FromString(file.Name())
-			if err != nil {
-				continue
-			}
+		v, err := verzion.FromString(file.Name())
+		if err != nil {
+			continue
+		}
 
-			tag := Tag{Hash: string(content), Version: v}
-			if hash == tag.Hash {
-				tagVersions = append(tagVersions, tag)
-			}
+		tag := Tag{Hash: sanitiseHash(content), Version: v}
+		if hash == tag.Hash {
+			tagVersions = append(tagVersions, tag)
 		}
 	}
 
@@ -108,6 +111,11 @@ func FindTagByHash(repoPath string, hash string) (verzion.Verzion, error) {
 	return tagVersions[len(tagVersions)-1].Version, nil
 }
 
+func sanitiseHash(hash []byte) string {
+	c := strings.TrimSpace(string(hash))
+	return strings.TrimSuffix(c, "\n")
+}
+
 // FindLatestCommit determine the latest commit sha
 func FindLatestCommit(repoPath string) (string, error) {
 	a := filepath.Join(repoPath, ".git", "HEAD")
@@ -116,7 +124,7 @@ func FindLatestCommit(repoPath string) (string, error) {
 		return "", err
 	}
 
-	content := strings.TrimSuffix(string(c), "\n")
+	content := sanitiseHash(c)
 
 	// If is not detach, extract reference
 	if strings.HasPrefix(content, "ref:") {
@@ -126,7 +134,7 @@ func FindLatestCommit(repoPath string) (string, error) {
 		if err != nil {
 			return "", err
 		}
-		return string(c), nil
+		return sanitiseHash(c), nil
 	}
 
 	return content, nil

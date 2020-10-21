@@ -1,10 +1,11 @@
 package verzioner
 
 import (
-	"github.com/jsalinaspolo/verzion/internal/git"
-	"github.com/jsalinaspolo/verzion/internal/verzion"
 	"sort"
 	"strings"
+
+	"github.com/jsalinaspolo/verzion/internal/git"
+	"github.com/jsalinaspolo/verzion/internal/verzion"
 )
 
 type RepositoryPath struct {
@@ -17,6 +18,7 @@ func FindVersion(current bool, sha bool, branch bool, repoPath RepositoryPath) (
 	commitHash, _ := git.FindLatestCommit(repoPath.Path)
 	tagVersion, err := git.FindTagByHash(repoPath.Path, commitHash)
 
+	// Commit has not been tagged
 	if err != nil {
 		fileTagVersion, _ := git.FromFileTags(repoPath.Path)
 		// Only check packed refs if there's no file tags.
@@ -25,11 +27,11 @@ func FindVersion(current bool, sha bool, branch bool, repoPath RepositoryPath) (
 			packedVersion, _ := git.FromPackedRefs(repoPath.Path)
 			tagVersion = packedVersion
 		}
-	}
 
-	// Increment the patch version of our last tag (unless `-c` is set).
-	if !current {
-		tagVersion.Patch++
+		// Increment the patch version of our last tag (unless `-c` is set).
+		if !current {
+			tagVersion.Patch++
+		}
 	}
 
 	// Parse a version from the VERSION file.
