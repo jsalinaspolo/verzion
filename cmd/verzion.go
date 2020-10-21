@@ -33,13 +33,14 @@ var helpMessage = func() string {
 	f, _ := verzion.FromFile(".")
 	p, _ := git.FromPackedRefs(".")
 	v, _ := verzion.FromFile("VERSION")
-	z, _ := verzioner.FindVersion(false, false, verzioner.RepositoryPath{})
+	z, _ := verzioner.FindVersion(false, false, false, verzioner.RepositoryPath{Path: "."})
 	return fmt.Sprintf(help, help1, f, p, v, z, help2)
 }
 
 func versionCmd() *cobra.Command {
 	const currentFlag = "current"
 	const shaFlag = "sha"
+	const branchFlag = "branch"
 
 	cmd := &cobra.Command{
 		Use:   "verzion [command]",
@@ -47,12 +48,14 @@ func versionCmd() *cobra.Command {
 		PreRun: func(cmd *cobra.Command, args []string) {
 			_ = viper.BindPFlag(currentFlag, cmd.Flags().Lookup(currentFlag))
 			_ = viper.BindPFlag(shaFlag, cmd.Flags().Lookup(shaFlag))
+			_ = viper.BindPFlag(branchFlag, cmd.Flags().Lookup(branchFlag))
 		},
 		RunE: func(cmd *cobra.Command, args []string) error {
 			c := viper.Get(currentFlag).(bool)
 			sha := viper.Get(shaFlag).(bool)
+			branch := viper.Get(branchFlag).(bool)
 
-			v, err := verzioner.FindVersion(c, sha, verzioner.RepositoryPath{})
+			v, err := verzioner.FindVersion(c, sha, branch, verzioner.RepositoryPath{Path: "."})
 			if err != nil {
 				return err
 			}
@@ -63,6 +66,7 @@ func versionCmd() *cobra.Command {
 
 	cmd.Flags().BoolP(currentFlag, "c", false, "current version")
 	cmd.Flags().BoolP(shaFlag, "s", false, "append the current commit sha")
+	cmd.Flags().BoolP(branchFlag, "b", false, "append the current branch name")
 	cmd.SetHelpTemplate(helpMessage())
 	return cmd
 }

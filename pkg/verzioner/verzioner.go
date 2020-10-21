@@ -8,12 +8,12 @@ import (
 )
 
 type RepositoryPath struct {
-	Path string `default:"."`
+	Path string
 }
 
 // findVersion encapsulates the logic of verzion.
 // This function ignores errors. For our use case, we always want to print a version,
-func FindVersion(current bool, sha bool, repoPath RepositoryPath) (string, error) {
+func FindVersion(current bool, sha bool, branch bool, repoPath RepositoryPath) (string, error) {
 	commitHash, _ := git.FindLatestCommit(repoPath.Path)
 	tagVersion, err := git.FindTagByHash(repoPath.Path, commitHash)
 
@@ -54,6 +54,16 @@ func FindVersion(current bool, sha bool, repoPath RepositoryPath) (string, error
 	}
 
 	var metadata []string
+
+	// Add branch flag.
+	if branch {
+		b, _ := git.Branch(repoPath.Path)
+		trimmedBranch := strings.TrimSpace(b)
+		if len(trimmedBranch) > 0 && trimmedBranch != "master" {
+			metadata = append(metadata, trimmedBranch)
+		}
+	}
+
 	// Add sha flag.
 	if sha {
 		sha, err := git.FindShortCommitSha(repoPath.Path)

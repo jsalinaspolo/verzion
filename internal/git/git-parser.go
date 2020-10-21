@@ -143,3 +143,18 @@ func FindShortCommitSha(path string) (string, error) {
 	}
 	return hash, nil
 }
+
+func Branch(path string) (string, error) {
+	b, err := ioutil.ReadFile(filepath.Join(path, ".git", "HEAD"))
+	if err != nil {
+		return "", err
+	}
+
+	branch := string(b)
+
+	if !strings.HasPrefix(branch, "ref: refs/heads/") {
+		return "", fmt.Errorf("could not parse any branch out of `%s`", path)
+	}
+
+	return strings.TrimSpace(strings.TrimPrefix(branch, "ref: refs/heads/")), nil
+}
