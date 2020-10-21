@@ -147,7 +147,6 @@ func TestFindLatestCommit(t *testing.T) {
 		latestCommit, err := FindLatestCommit(tempDir)
 		require.NoError(t, err)
 		require.Equal(t, "7a9d0ca3e6e684ca2f35197511e0290496d94215", latestCommit)
-
 	})
 
 	t.Run("should fail if HEAD does not exists", func(t *testing.T) {
@@ -165,5 +164,24 @@ func TestAddCommitSha(t *testing.T) {
 		shortCommitSha, err := FindShortCommitSha(tempDir)
 		require.NoError(t, err)
 		require.Equal(t, "7a9d0ca", shortCommitSha)
+	})
+}
+
+func TestBranch(t *testing.T) {
+	t.Run("should get branch name", func(t *testing.T) {
+		tempDir := t.TempDir()
+		StubHead(t, tempDir, []byte(`ref: refs/heads/a-branch`))
+
+		branch, err := Branch(tempDir)
+		require.NoError(t, err)
+		require.Equal(t, "a-branch", branch)
+	})
+
+	t.Run("should fail if can't get branch", func(t *testing.T) {
+		tempDir := t.TempDir()
+		StubHead(t, tempDir, []byte(`7a9d0ca3e6e684ca2f35197511e0290496d94215`))
+
+		_, err := Branch(tempDir)
+		require.Error(t, err)
 	})
 }
