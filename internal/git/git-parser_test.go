@@ -197,3 +197,27 @@ func TestBranch(t *testing.T) {
 		require.Error(t, err)
 	})
 }
+
+func TestFromPatchBranch(t *testing.T) {
+
+	t.Run("should get version from patch branch", func(t *testing.T) {
+		tempDir := t.TempDir()
+		StubHead(t, tempDir, []byte(`ref: refs/heads/patch-v1.1`))
+		StubRefsHead(t, tempDir, "a-branch", []byte(`7a9d0ca3e6e684ca2f35197511e0290496d94215`))
+
+		v, err := FromPatchBranch(tempDir)
+
+		require.NoError(t, err)
+		require.Equal(t, verzion.Verzion{Major: 1, Minor: 1, Patch: 0}, v)
+	})
+
+	t.Run("should fail if does not contain a valid version", func(t *testing.T) {
+		tempDir := t.TempDir()
+		StubHead(t, tempDir, []byte(`ref: refs/heads/patch-v1`))
+		StubRefsHead(t, tempDir, "a-branch", []byte(`7a9d0ca3e6e684ca2f35197511e0290496d94215`))
+
+		_, err := FromPatchBranch(tempDir)
+
+		require.Error(t, err)
+	})
+}

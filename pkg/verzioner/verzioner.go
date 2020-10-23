@@ -12,44 +12,52 @@ type RepositoryPath struct {
 	Path string
 }
 
-// findVersion encapsulates the logic of verzion.
-// This function ignores errors. For our use case, we always want to print a version,
+// FindVersion encapsulates the logic of verzion.
 func FindVersion(current bool, sha bool, branch bool, repoPath RepositoryPath) (string, error) {
 	commitHash, _ := git.FindLatestCommit(repoPath.Path)
 	tagVersion, err := git.FindTagByHash(repoPath.Path, commitHash)
 
 	// Current commit sha has not been tagged
 	if err != nil {
-		fileTagVersion, _ := git.FromFileTags(repoPath.Path)
-		// Only check packed refs if there's no file tags.
-		tagVersion = fileTagVersion
-		if tagVersion.Equal(verzion.Zero) {
-			packedVersion, _ := git.FromPackedRefs(repoPath.Path)
-			tagVersion = packedVersion
+		v, err := git.FromPatchBranch(repoPath.Path)
+		if err == nil { // Patch Version
+			// Increment patch version (unless `-c` is set).
+			if !current {
+				v.Patch++
+			}
+		} else { // Minor Version
+			fileTagVersion, _ := git.FromFileTags(repoPath.Path)
+			// Only check packed refs if there's no file tags.
+			v = fileTagVersion
+			if v.Equal(verzion.Zero) {
+				packedVersion, _ := git.FromPackedRefs(repoPath.Path)
+				v = packedVersion
+			}
+
+			// Increment the minor version of our last tag (unless `-c` is set).
+			if !current {
+				v.Minor++
+				v.Patch = 0
+			}
+
+			// Parse a version from the VERSION file.
+			fileVersion, _ := verzion.FromVersionFile(repoPath.Path + "/VERSION")
+			// Sort the two versions and take the latest.
+			versions := verzion.Slice{fileVersion, v}
+			sort.Stable(versions)
+			v = versions[1]
 		}
 
-		// Increment the minor version of our last tag (unless `-c` is set).
-		if !current {
-			tagVersion.Minor++
-			tagVersion.Patch = 0
-		}
+		// TODO should change the logic and name variables
+		tagVersion = v
 	}
 
-	// Parse a version from the VERSION file.
-	fileVersion, _ := verzion.FromVersionFile(repoPath.Path + "/VERSION")
+	// TODO this does not make sense
+	latestVersion := tagVersion
 
-	// Sort the two versions and take the latest.
-	versions := verzion.Slice{fileVersion, tagVersion}
-	sort.Stable(versions)
-	latestVersion := versions[1]
-
-	// If `-c` is on, return the latest tagged version.
+		// If `-c` is on, return the latest tagged version.
 	// If there are no tagged versions, return the VERSION file content or 0.0.0.
 	if current {
-		if tagVersion.Equal(verzion.Zero) {
-			return latestVersion.String(), nil
-		}
-
 		return tagVersion.String(), nil
 	}
 

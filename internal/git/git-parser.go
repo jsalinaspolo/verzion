@@ -4,6 +4,7 @@ import (
 	"fmt"
 	"io/ioutil"
 	"path/filepath"
+	"regexp"
 	"sort"
 	"strings"
 
@@ -165,4 +166,19 @@ func Branch(path string) (string, error) {
 	}
 
 	return strings.TrimSpace(strings.TrimPrefix(branch, "ref: refs/heads/")), nil
+}
+
+func FromPatchBranch(path string) (verzion.Verzion, error) {
+	branch, err := Branch(path)
+	if err != nil {
+		return verzion.Verzion{}, err
+	}
+
+	re := regexp.MustCompile(`patch-v([0-9]+\.[0-9]+)`)
+	v := re.FindStringSubmatch(branch)
+
+	if v == nil || len(v) < 1 {
+		return verzion.Verzion{}, fmt.Errorf("error parsing version from patch branch %s", branch)
+	}
+	return verzion.FromString(v[1])
 }
