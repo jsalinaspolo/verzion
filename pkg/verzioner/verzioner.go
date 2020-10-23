@@ -18,7 +18,7 @@ func FindVersion(current bool, sha bool, branch bool, repoPath RepositoryPath) (
 	commitHash, _ := git.FindLatestCommit(repoPath.Path)
 	tagVersion, err := git.FindTagByHash(repoPath.Path, commitHash)
 
-	// Commit has not been tagged
+	// Current commit sha has not been tagged
 	if err != nil {
 		fileTagVersion, _ := git.FromFileTags(repoPath.Path)
 		// Only check packed refs if there's no file tags.
@@ -28,17 +28,15 @@ func FindVersion(current bool, sha bool, branch bool, repoPath RepositoryPath) (
 			tagVersion = packedVersion
 		}
 
-		// Increment the patch version of our last tag (unless `-c` is set).
+		// Increment the minor version of our last tag (unless `-c` is set).
 		if !current {
-			tagVersion.Patch++
+			tagVersion.Minor++
+			tagVersion.Patch = 0
 		}
 	}
 
 	// Parse a version from the VERSION file.
-	fileVersion, _ := verzion.FromFile(repoPath.Path + "/VERSION")
-
-	// Ignore any patch number in the VERSION file.
-	fileVersion.Patch = 0
+	fileVersion, _ := verzion.FromVersionFile(repoPath.Path + "/VERSION")
 
 	// Sort the two versions and take the latest.
 	versions := verzion.Slice{fileVersion, tagVersion}
@@ -75,6 +73,7 @@ func FindVersion(current bool, sha bool, branch bool, repoPath RepositoryPath) (
 		metadata = append(metadata, sha)
 	}
 
+	latestVersion.AddMetadata(metadata)
 	latestVersion.Metadata = strings.Join(metadata, ".")
 	return latestVersion.String(), nil
 }

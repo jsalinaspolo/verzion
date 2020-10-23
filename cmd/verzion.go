@@ -19,20 +19,20 @@ var help2 = `
 * It looks at the local git tags and VERSION file, compares them,
   and prints out a sensible semantic version (https://semver.org).
 
-* By default, running zersion increments the patch number, e.g. 1.1.1 -> 1.1.2
+* By default, running zersion increments the minor number, e.g. 1.1.1 -> 1.2.0
   To print the current version instead, use 'zersion -c'.
 
 * Zersions are printed in the following format:
   [Major].[Minor].[Patch]+[Sha]
 
-* Your VERSION file should be in the format [Major].[Minor]
-  Patch numbers in VERSION files are ignored.`
+* Your VERSION file should be in the format [Major].0
+  Minor and Patch numbers in VERSION files are ignored.`
 
 var helpMessage = func() string {
 	var help = "%s\n      - From tags: %s\n      - From packed tags: %s\n      - From VERSION file: %s\n      - Zersion will output: %s\n%s\n\n"
-	f, _ := verzion.FromFile(".")
+	f, _ := git.FromFileTags(".")
 	p, _ := git.FromPackedRefs(".")
-	v, _ := verzion.FromFile("VERSION")
+	v, _ := verzion.FromVersionFile("VERSION")
 	z, _ := verzioner.FindVersion(false, false, false, verzioner.RepositoryPath{Path: "."})
 	return fmt.Sprintf(help, help1, f, p, v, z, help2)
 }

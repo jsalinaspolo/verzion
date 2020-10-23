@@ -25,10 +25,10 @@ $ verzion -h
 * Verzions are printed in the following format:
   [Major].[Minor].[Patch]+[Sha]
 
-* Your VERSION file should be in the format [Major].[Minor]
-  Patch numbers in VERSION files are ignored.
+* Your VERSION file should be in the format Major[.Minor]
+  Minor and Patch numbers in VERSION files are ignored.
 
-* By default, running zersion increments the patch number, e.g. 1.1.1 -> 1.1.2
+* By default, running zersion increments the minor number, e.g. 1.1.1 -> 1.2.0
   To print the current version instead, use 'verzion -c'.
 
 * By default, prints next release version incrementing patch number.

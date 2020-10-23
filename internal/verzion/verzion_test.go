@@ -111,6 +111,18 @@ func TestVerzion_String(t *testing.T) {
 func TestFromFile(t *testing.T) {
 
 	t.Run("should get version from VERSION file", func(t *testing.T) {
+		input := []byte(`2.0.0`)
+
+		tmpFile := filepath.Join(t.TempDir(), "VERSION")
+		err := ioutil.WriteFile(tmpFile, input, 0666)
+
+		require.NoError(t, err)
+		v, err := FromVersionFile(tmpFile)
+		require.NoError(t, err)
+		require.Equal(t, Verzion{Major: 2, Minor: 0, Patch: 0}, v)
+	})
+
+	t.Run("should only use MAJOR from VERSION file", func(t *testing.T) {
 		input := []byte(`1.2.3`)
 
 		tmpFile := filepath.Join(t.TempDir(), "VERSION")
@@ -118,8 +130,8 @@ func TestFromFile(t *testing.T) {
 		err := ioutil.WriteFile(tmpFile, input, 0666)
 
 		require.NoError(t, err)
-		v, err := FromFile(tmpFile)
+		v, err := FromVersionFile(tmpFile)
 		require.NoError(t, err)
-		require.Equal(t, Verzion{Major: 1, Minor: 2, Patch: 3}, v)
+		require.Equal(t, Verzion{Major: 1, Minor: 0, Patch: 0}, v)
 	})
 }

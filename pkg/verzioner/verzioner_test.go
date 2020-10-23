@@ -17,12 +17,12 @@ func before(t *testing.T) string {
 }
 
 func TestFindVersion(t *testing.T) {
-	t.Run("should increase path for zero verzion when empty repository", func(t *testing.T) {
+	t.Run("should increase minor for zero verzion when empty repository", func(t *testing.T) {
 		tempDir := before(t)
 		v, err := FindVersion(false, false, false, RepositoryPath{Path: tempDir})
 
 		require.NoError(t, err)
-		require.Equal(t, "0.0.1", v)
+		require.Equal(t, "0.1.0", v)
 	})
 
 	t.Run("should get current version based on latest tags ", func(t *testing.T) {
@@ -51,12 +51,13 @@ func TestFindVersion(t *testing.T) {
 		tags = append(tags, git.Tag{Hash: "111", Version: verzion.Verzion{Major: 1, Minor: 1}})
 		tags = append(tags, git.Tag{Hash: "222", Version: verzion.Verzion{Major: 1, Minor: 2}})
 		tags = append(tags, git.Tag{Hash: "333", Version: verzion.Verzion{Major: 1, Minor: 3}})
+		tags = append(tags, git.Tag{Hash: "444", Version: verzion.Verzion{Major: 1, Minor: 3, Patch: 1}})
 		git.StubRefsTags(t, tempDir, tags)
 
 		v, err := FindVersion(false, false, false, RepositoryPath{Path: tempDir})
 
 		require.NoError(t, err)
-		require.Equal(t, "1.3.1", v)
+		require.Equal(t, "1.4.0", v)
 	})
 
 	t.Run("should use tag version if commit matches the tag", func(t *testing.T) {
@@ -82,11 +83,11 @@ func TestFindVersion(t *testing.T) {
 		tags = append(tags, git.Tag{Hash: "222", Version: verzion.Verzion{Major: 1, Minor: 2}})
 		tags = append(tags, git.Tag{Hash: "333", Version: verzion.Verzion{Major: 1, Minor: 3}})
 		git.StubRefsTags(t, tempDir, tags)
-		git.StubVersion(t, tempDir, "2.1")
+		git.StubVersion(t, tempDir, "2.0")
 
 		v, err := FindVersion(false, false, false, RepositoryPath{Path: tempDir})
 		require.NoError(t, err)
-		require.Equal(t, "2.1.0", v)
+		require.Equal(t, "2.0.0", v)
 	})
 
 	t.Run("should add commit sha to version ", func(t *testing.T) {
@@ -99,7 +100,7 @@ func TestFindVersion(t *testing.T) {
 
 		v, err := FindVersion(false, true, false, RepositoryPath{Path: tempDir})
 		require.NoError(t, err)
-		require.Equal(t, "1.3.1+7a9d0ca", v)
+		require.Equal(t, "1.4.0+7a9d0ca", v)
 	})
 
 	t.Run("should add branch name to version ", func(t *testing.T) {
@@ -113,6 +114,6 @@ func TestFindVersion(t *testing.T) {
 
 		v, err := FindVersion(false, false, true, RepositoryPath{Path: tempDir})
 		require.NoError(t, err)
-		require.Equal(t, "1.3.1+branch-name", v)
+		require.Equal(t, "1.4.0+branch-name", v)
 	})
 }

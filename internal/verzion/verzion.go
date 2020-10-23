@@ -8,12 +8,15 @@ import (
 	"strings"
 )
 
-// Verzion is a semantic version, allowing suffix.
 type Verzion struct {
 	Major    int
 	Minor    int
 	Patch    int
 	Metadata string
+}
+
+func (v Verzion) AddMetadata(metadata []string) {
+	v.Metadata = strings.Join(metadata, ".")
 }
 
 // Zero is the Zero Verzion
@@ -32,7 +35,9 @@ func (v Verzion) Less(cmp Verzion) bool {
 
 // Equal checks if a version is equal to the receiver.
 func (v Verzion) Equal(cmp Verzion) bool {
-	if v.Major == cmp.Major && v.Minor == cmp.Minor && v.Patch == cmp.Patch {
+	if v.Major == cmp.Major &&
+		v.Minor == cmp.Minor &&
+		v.Patch == cmp.Patch {
 		return true
 	}
 
@@ -40,16 +45,16 @@ func (v Verzion) Equal(cmp Verzion) bool {
 }
 
 // String prints the Verzion to a string.
-func (z Verzion) String() string {
-	s := fmt.Sprintf("%d.%d.%d", z.Major, z.Minor, z.Patch)
-	if len(strings.TrimSpace(z.Metadata)) > 0 {
-		return s + "+" + z.Metadata
+func (v Verzion) String() string {
+	s := fmt.Sprintf("%d.%d.%d", v.Major, v.Minor, v.Patch)
+	if len(strings.TrimSpace(v.Metadata)) > 0 {
+		return s + "+" + v.Metadata
 	}
 	return s
 }
 
-// FromFile parses a VERSION file into a Verzion.
-func FromFile(path string) (Verzion, error) {
+// FromVersionFile parses a VERSION file into a Verzion.
+func FromVersionFile(path string) (Verzion, error) {
 	content, err := ioutil.ReadFile(path)
 	if err != nil {
 		return Verzion{}, err
@@ -60,6 +65,9 @@ func FromFile(path string) (Verzion, error) {
 		return Verzion{}, err
 	}
 
+	//
+	ver.Minor = 0
+	ver.Patch = 0
 	return ver, nil
 }
 
