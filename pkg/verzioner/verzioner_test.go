@@ -160,6 +160,20 @@ func TestFindVersion(t *testing.T) {
 		require.Equal(t, "1.1.1", v)
 	})
 
+	t.Run("should increase patch if is a patch branch with previous patch", func(t *testing.T) {
+		tempDir := before(t)
+		git.StubHead(t, tempDir, []byte("ref: refs/heads/patch-v1.1"))
+		var tags []git.Tag
+		tags = append(tags, git.Tag{Hash: "111", Version: verzion.Verzion{Major: 1, Minor: 0}})
+		tags = append(tags, git.Tag{Hash: "111", Version: verzion.Verzion{Major: 1, Minor: 1}})
+		tags = append(tags, git.Tag{Hash: "222", Version: verzion.Verzion{Major: 1, Minor: 1, Patch: 1}})
+		git.StubRefsTags(t, tempDir, tags)
+
+		v, err := FindVersion(false, false, false, "v1.1", RepositoryPath{Path: tempDir})
+		require.NoError(t, err)
+		require.Equal(t, "1.1.2", v)
+	})
+
 	t.Run("should increase patch if is a patch branch having highest VERSION file ", func(t *testing.T) {
 		tempDir := before(t)
 		git.StubHead(t, tempDir, []byte("ref: refs/heads/patch-v1.1"))
