@@ -13,19 +13,27 @@ type RepositoryPath struct {
 }
 
 // FindVersion encapsulates the logic of verzion.
-func FindVersion(current bool, sha bool, branch bool, repoPath RepositoryPath) (string, error) {
+func FindVersion(current bool, sha bool, branch bool, patch string, repoPath RepositoryPath) (string, error) {
 	commitHash, _ := git.FindLatestCommit(repoPath.Path)
 	tagVersion, err := git.FindTagByHash(repoPath.Path, commitHash)
 
 	// Current commit sha has not been tagged
 	if err != nil {
-		v, err := git.FromPatchBranch(repoPath.Path)
-		if err == nil { // Patch Version
+		var v verzion.Verzion
+		//v, err := git.FromPatchBranch(repoPath.Path)
+		if patch != "" {
+			t, err := git.FindLatestTag(repoPath.Path, patch)
+			if err != nil {
+				return "", err
+			}
+
+			v = t
 			// Increment patch version (unless `-c` is set).
 			if !current {
 				v.Patch++
 			}
-		} else { // Minor Version
+		} else {
+			// Minor Version
 			fileTagVersion, _ := git.FromFileTags(repoPath.Path)
 			// Only check packed refs if there's no file tags.
 			v = fileTagVersion
@@ -55,7 +63,7 @@ func FindVersion(current bool, sha bool, branch bool, repoPath RepositoryPath) (
 	// TODO this does not make sense
 	latestVersion := tagVersion
 
-		// If `-c` is on, return the latest tagged version.
+	// If `-c` is on, return the latest tagged version.
 	// If there are no tagged versions, return the VERSION file content or 0.0.0.
 	if current {
 		return tagVersion.String(), nil

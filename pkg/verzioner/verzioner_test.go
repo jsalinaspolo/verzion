@@ -19,7 +19,7 @@ func before(t *testing.T) string {
 func TestFindVersion(t *testing.T) {
 	t.Run("should increase minor for zero verzion when empty repository", func(t *testing.T) {
 		tempDir := before(t)
-		v, err := FindVersion(false, false, false, RepositoryPath{Path: tempDir})
+		v, err := FindVersion(false, false, false, "", RepositoryPath{Path: tempDir})
 
 		require.NoError(t, err)
 		require.Equal(t, "0.1.0", v)
@@ -29,7 +29,7 @@ func TestFindVersion(t *testing.T) {
 		tempDir := before(t)
 		git.StubVersion(t, tempDir, "2.0")
 
-		v, err := FindVersion(false, false, false, RepositoryPath{Path: tempDir})
+		v, err := FindVersion(false, false, false, "", RepositoryPath{Path: tempDir})
 
 		require.NoError(t, err)
 		require.Equal(t, "2.0.0", v)
@@ -43,14 +43,14 @@ func TestFindVersion(t *testing.T) {
 		tags = append(tags, git.Tag{Hash: "333", Version: verzion.Verzion{Major: 1, Minor: 3}})
 		git.StubRefsTags(t, tempDir, tags)
 
-		v, err := FindVersion(true, false, false, RepositoryPath{Path: tempDir})
+		v, err := FindVersion(true, false, false, "", RepositoryPath{Path: tempDir})
 		require.NoError(t, err)
 		require.Equal(t, "1.3.0", v)
 	})
 
 	t.Run("should get current zero verzion when empty repository", func(t *testing.T) {
 		tempDir := before(t)
-		v, err := FindVersion(true, false, false, RepositoryPath{Path: tempDir})
+		v, err := FindVersion(true, false, false, "", RepositoryPath{Path: tempDir})
 		require.NoError(t, err)
 		require.Equal(t, "0.0.0", v)
 	})
@@ -64,7 +64,7 @@ func TestFindVersion(t *testing.T) {
 		tags = append(tags, git.Tag{Hash: "444", Version: verzion.Verzion{Major: 1, Minor: 3, Patch: 1}})
 		git.StubRefsTags(t, tempDir, tags)
 
-		v, err := FindVersion(false, false, false, RepositoryPath{Path: tempDir})
+		v, err := FindVersion(false, false, false, "", RepositoryPath{Path: tempDir})
 
 		require.NoError(t, err)
 		require.Equal(t, "1.4.0", v)
@@ -80,7 +80,7 @@ func TestFindVersion(t *testing.T) {
 
 		git.StubRefsTags(t, tempDir, tags)
 
-		v, err := FindVersion(false, false, false, RepositoryPath{Path: tempDir})
+		v, err := FindVersion(false, false, false, "", RepositoryPath{Path: tempDir})
 
 		require.NoError(t, err)
 		require.Equal(t, "1.2.3", v)
@@ -98,7 +98,7 @@ func TestFindVersion(t *testing.T) {
 		git.StubVersion(t, tempDir, "2.0")
 
 
-		v, err := FindVersion(false, false, false, RepositoryPath{Path: tempDir})
+		v, err := FindVersion(false, false, false, "", RepositoryPath{Path: tempDir})
 
 		require.NoError(t, err)
 		require.Equal(t, "1.2.3", v)
@@ -113,7 +113,7 @@ func TestFindVersion(t *testing.T) {
 		git.StubRefsTags(t, tempDir, tags)
 		git.StubVersion(t, tempDir, "2.0")
 
-		v, err := FindVersion(false, false, false, RepositoryPath{Path: tempDir})
+		v, err := FindVersion(false, false, false, "", RepositoryPath{Path: tempDir})
 		require.NoError(t, err)
 		require.Equal(t, "2.0.0", v)
 	})
@@ -126,7 +126,7 @@ func TestFindVersion(t *testing.T) {
 		tags = append(tags, git.Tag{Hash: "333", Version: verzion.Verzion{Major: 1, Minor: 3}})
 		git.StubRefsTags(t, tempDir, tags)
 
-		v, err := FindVersion(false, true, false, RepositoryPath{Path: tempDir})
+		v, err := FindVersion(false, true, false, "", RepositoryPath{Path: tempDir})
 		require.NoError(t, err)
 		require.Equal(t, "1.4.0+7a9d0ca", v)
 	})
@@ -140,7 +140,7 @@ func TestFindVersion(t *testing.T) {
 		tags = append(tags, git.Tag{Hash: "333", Version: verzion.Verzion{Major: 1, Minor: 3}})
 		git.StubRefsTags(t, tempDir, tags)
 
-		v, err := FindVersion(false, false, true, RepositoryPath{Path: tempDir})
+		v, err := FindVersion(false, false, true, "", RepositoryPath{Path: tempDir})
 		require.NoError(t, err)
 		require.Equal(t, "1.4.0+branch-name", v)
 	})
@@ -155,7 +155,7 @@ func TestFindVersion(t *testing.T) {
 		tags = append(tags, git.Tag{Hash: "333", Version: verzion.Verzion{Major: 1, Minor: 3}})
 		git.StubRefsTags(t, tempDir, tags)
 
-		v, err := FindVersion(false, false, false, RepositoryPath{Path: tempDir})
+		v, err := FindVersion(false, false, false, "v1.1", RepositoryPath{Path: tempDir})
 		require.NoError(t, err)
 		require.Equal(t, "1.1.1", v)
 	})
@@ -171,7 +171,7 @@ func TestFindVersion(t *testing.T) {
 		tags = append(tags, git.Tag{Hash: "333", Version: verzion.Verzion{Major: 1, Minor: 3}})
 		git.StubRefsTags(t, tempDir, tags)
 
-		v, err := FindVersion(false, false, false, RepositoryPath{Path: tempDir})
+		v, err := FindVersion(false, false, false, "v1.1", RepositoryPath{Path: tempDir})
 		require.NoError(t, err)
 		require.Equal(t, "1.1.1", v)
 	})
@@ -186,7 +186,7 @@ func TestFindVersion(t *testing.T) {
 		tags = append(tags, git.Tag{Hash: "333", Version: verzion.Verzion{Major: 1, Minor: 3}})
 		git.StubRefsTags(t, tempDir, tags)
 
-		v, err := FindVersion(true, false, false, RepositoryPath{Path: tempDir})
+		v, err := FindVersion(true, false, false, "v1.1", RepositoryPath{Path: tempDir})
 		require.NoError(t, err)
 		require.Equal(t, "1.1.0", v)
 	})

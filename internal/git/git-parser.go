@@ -182,3 +182,31 @@ func FromPatchBranch(path string) (verzion.Verzion, error) {
 	}
 	return verzion.FromString(v[1])
 }
+
+func FindLatestTag(repoPath string, tag string) (verzion.Verzion, error) {
+	gitRefsTagPath := filepath.Join(repoPath, ".git", "refs", "tags")
+	fileTags, err := ioutil.ReadDir(gitRefsTagPath)
+	if err != nil {
+		return verzion.Verzion{}, err
+	}
+
+	tagVersions := verzion.Slice{}
+	for _, file := range fileTags {
+		if !strings.Contains(file.Name(), tag) {
+			continue
+		}
+
+		v, err := verzion.FromString(file.Name())
+		if err != nil {
+			continue
+		}
+		tagVersions = append(tagVersions, v)
+	}
+
+	if len(tagVersions) == 0 {
+		return verzion.Verzion{}, fmt.Errorf("could not find any tag of `%s`", tag)
+	}
+
+	sort.Stable(tagVersions)
+	return tagVersions[len(tagVersions)-1], nil
+}

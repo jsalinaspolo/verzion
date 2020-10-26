@@ -221,3 +221,50 @@ func TestFromPatchBranch(t *testing.T) {
 		require.Error(t, err)
 	})
 }
+
+func TestFindLatestTag(t *testing.T) {
+	t.Run("should find latest tag/patch based on tag", func(t *testing.T) {
+		tempDir := t.TempDir()
+		// detach head
+		StubHead(t, tempDir, []byte(`7a9d0ca3e6e684ca2f35197511e0290496d94215`))
+		var tags []Tag
+		tags = append(tags, Tag{Hash: "111", Version: verzion.Verzion{Major: 1, Minor: 1}})
+		tags = append(tags, Tag{Hash: "222", Version: verzion.Verzion{Major: 1, Minor: 1, Patch: 1}})
+		tags = append(tags, Tag{Hash: "333", Version: verzion.Verzion{Major: 1, Minor: 1, Patch: 2}})
+		StubRefsTags(t, tempDir, tags)
+
+		v, err := FindLatestTag(tempDir, "v1.1")
+
+		require.NoError(t, err)
+		require.Equal(t, verzion.Verzion{Major: 1, Minor: 1, Patch: 2}, v)
+	})
+
+	t.Run("should find latest tag based on tag", func(t *testing.T) {
+		tempDir := t.TempDir()
+		// detach head
+		StubHead(t, tempDir, []byte(`7a9d0ca3e6e684ca2f35197511e0290496d94215`))
+		var tags []Tag
+		tags = append(tags, Tag{Hash: "111", Version: verzion.Verzion{Major: 1, Minor: 1}})
+		tags = append(tags, Tag{Hash: "222", Version: verzion.Verzion{Major: 1, Minor: 2}})
+		StubRefsTags(t, tempDir, tags)
+
+		v, err := FindLatestTag(tempDir, "v1.1")
+
+		require.NoError(t, err)
+		require.Equal(t, verzion.Verzion{Major: 1, Minor: 1, Patch: 0}, v)
+	})
+
+	t.Run("should fail if tag is not found", func(t *testing.T) {
+		tempDir := t.TempDir()
+		// detach head
+		StubHead(t, tempDir, []byte(`7a9d0ca3e6e684ca2f35197511e0290496d94215`))
+		var tags []Tag
+		tags = append(tags, Tag{Hash: "111", Version: verzion.Verzion{Major: 1, Minor: 2}})
+		tags = append(tags, Tag{Hash: "222", Version: verzion.Verzion{Major: 1, Minor: 3}})
+		StubRefsTags(t, tempDir, tags)
+
+		_, err := FindLatestTag(tempDir, "v1.1")
+
+		require.Error(t, err)
+	})
+}
