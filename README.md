@@ -6,7 +6,7 @@
 Versioning should be simple, but most of the times it is solved in different ways. Some times it is managed  manually, based on build numbers, based on tags, based on date times and with many other strategies. 
 Most of the times, versioning between services and application in an organisation are not consistent because the solution is custom per team, department or repository.
 
-Verzion solves how versioning is managed making it deterministic and consistent following Semantic Versioning.
+Verzion solves how versioning is managed making it deterministic and consistent following [Semantic Versioning](https://semver.org).
 
 ## How
 
@@ -40,13 +40,13 @@ $ verzion -h
 * It looks at the local git tags and VERSION file, compares them,
   and prints out a sensible semantic version (https://semver.org).
 
-* Verzions are printed in the following format:
+* Versions are printed in the following format:
   [Major].[Minor].[Patch]+[Sha]
 
 * Your VERSION file should be in the format Major[.Minor]
   Minor and Patch numbers in VERSION files are ignored.
 
-* By default, running zersion increments the minor number, e.g. 1.1.1 -> 1.2.0
+* By default, running `verzion` increments the minor number, e.g. 1.1.1 -> 1.2.0
   To print the current version instead, use 'verzion -c'.
 
 * By default, prints next release version incrementing patch number.

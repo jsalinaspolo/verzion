@@ -9,9 +9,9 @@ import (
 	"github.com/spf13/viper"
 )
 
-var help1 = `* Zersion prints the *next* semantic version to be tagged.
+var help1 = `* Verzion prints the *next* semantic version to be tagged.
 
-    Your Zersion (current directory):`
+    Your Verzion (current directory):`
 
 var help2 = `
 * It's mostly so that you don't have to update your VERSION file each release.
@@ -20,9 +20,9 @@ var help2 = `
   and prints out a sensible semantic version (https://semver.org).
 
 * By default, running zersion increments the minor number, e.g. 1.1.1 -> 1.2.0
-  To print the current version instead, use 'zersion -c'.
+  To print the current version instead, use 'verzion -c'.
 
-* Zersions are printed in the following format:
+* Versions are printed in the following format:
   [Major].[Minor].[Patch]+[Sha]
 
 * Your VERSION file should be in the format [Major].0
