@@ -1,6 +1,7 @@
 package verzioner
 
 import (
+	"regexp"
 	"sort"
 	"strings"
 
@@ -13,7 +14,7 @@ type RepositoryPath struct {
 }
 
 // FindVersion encapsulates the logic of verzion.
-func FindVersion(current bool, sha bool, branch bool, patch string, repoPath RepositoryPath) (string, error) {
+func FindVersion(current bool, sha bool, branch bool, patch string, metadata string, repoPath RepositoryPath) (string, error) {
 	commitHash, _ := git.FindLatestCommit(repoPath.Path)
 	tagVersion, err := git.FindTagByHash(repoPath.Path, commitHash)
 
@@ -69,14 +70,14 @@ func FindVersion(current bool, sha bool, branch bool, patch string, repoPath Rep
 		return tagVersion.String(), nil
 	}
 
-	var metadata []string
+	var metadataArray []string
 
 	// Add branch flag.
 	if branch {
 		b, _ := git.Branch(repoPath.Path)
 		trimmedBranch := strings.TrimSpace(b)
 		if len(trimmedBranch) > 0 && trimmedBranch != "master" {
-			metadata = append(metadata, trimmedBranch)
+			metadataArray = append(metadataArray, trimmedBranch)
 		}
 	}
 
@@ -86,10 +87,19 @@ func FindVersion(current bool, sha bool, branch bool, patch string, repoPath Rep
 		if err != nil {
 			return "", err
 		}
-		metadata = append(metadata, sha)
+		metadataArray = append(metadataArray, sha)
 	}
 
-	latestVersion.AddMetadata(metadata)
-	latestVersion.Metadata = strings.Join(metadata, ".")
+	if len(metadata) > 0 {
+		misc := regexp.MustCompile(`[^a-zA-Z0-9\-.+]+`).ReplaceAllString(metadata, "")
+		if len(misc) > 32 {
+			misc = misc[:32]
+		}
+
+		metadataArray = append(metadataArray, misc)
+	}
+
+	latestVersion.AddMetadata(metadataArray)
+	latestVersion.Metadata = strings.Join(metadataArray, ".")
 	return latestVersion.String(), nil
 }

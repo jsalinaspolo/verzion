@@ -54,5 +54,6 @@ $ verzion -h
   -c	        print without incrementing the patch version. Overrides all other flags.
   -p [version]  increment patch version
   -s            append the current commit sha.
+  -m            append a miscellaneous string (32 char limit, [0-9A-Za-z-.+] only).
   -v	        print the version of Verzion itself.
 ```

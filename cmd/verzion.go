@@ -33,7 +33,7 @@ var helpMessage = func() string {
 	f, _ := git.FromFileTags(".")
 	p, _ := git.FromPackedRefs(".")
 	v, _ := verzion.FromVersionFile("VERSION")
-	z, _ := verzioner.FindVersion(false, false, false, "", verzioner.RepositoryPath{Path: "."})
+	z, _ := verzioner.FindVersion(false, false, false, "", "", verzioner.RepositoryPath{Path: "."})
 	return fmt.Sprintf(help, help1, f, p, v, z, help2)
 }
 
@@ -42,6 +42,8 @@ func versionCmd() *cobra.Command {
 	const shaFlag = "sha"
 	const branchFlag = "branch"
 	const patchFlag = "patch"
+	const metadataFlag = "metadata"
+	const versionFlag = "version"
 
 	cmd := &cobra.Command{
 		Use:   "verzion [command]",
@@ -51,17 +53,26 @@ func versionCmd() *cobra.Command {
 			_ = viper.BindPFlag(shaFlag, cmd.Flags().Lookup(shaFlag))
 			_ = viper.BindPFlag(branchFlag, cmd.Flags().Lookup(branchFlag))
 			_ = viper.BindPFlag(patchFlag, cmd.Flags().Lookup(patchFlag))
+			_ = viper.BindPFlag(metadataFlag, cmd.Flags().Lookup(metadataFlag))
+			_ = viper.BindPFlag(versionFlag, cmd.Flags().Lookup(versionFlag))
 		},
 		RunE: func(cmd *cobra.Command, args []string) error {
 			c := viper.Get(currentFlag).(bool)
 			sha := viper.Get(shaFlag).(bool)
 			branch := viper.Get(branchFlag).(bool)
 			patch := viper.Get(patchFlag).(string)
+			metadata := viper.Get(metadataFlag).(string)
+			version := viper.Get(versionFlag).(bool)
 
-			v, err := verzioner.FindVersion(c, sha, branch, patch, verzioner.RepositoryPath{Path: "."})
+			if version {
+				// should print version
+			}
+
+			v, err := verzioner.FindVersion(c, sha, branch, patch, metadata, verzioner.RepositoryPath{Path: "."})
 			if err != nil {
 				return err
 			}
+
 			fmt.Println(v)
 			return nil
 		},
@@ -71,6 +82,8 @@ func versionCmd() *cobra.Command {
 	cmd.Flags().BoolP(shaFlag, "s", false, "append the current commit sha")
 	cmd.Flags().BoolP(branchFlag, "b", false, "append the current branch name")
 	cmd.Flags().StringP(patchFlag, "p", "", "patch version")
+	cmd.Flags().StringP(metadataFlag, "m", "", "append a miscellaneous string (32 char limit, [0-9A-Za-z-.+] only)")
+	cmd.Flags().BoolP(versionFlag, "v", false, "version of Verzion")
 	cmd.SetHelpTemplate(helpMessage())
 	return cmd
 }
