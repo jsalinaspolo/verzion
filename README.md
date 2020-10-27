@@ -6,7 +6,7 @@
 Versioning should be simple, but most of the times it is solved in different ways. Some times it is managed  manually, based on build numbers, based on tags, based on date times and with many other strategies. 
 Most of the times, versioning between services and application in an organisation are not consistent because the solution is custom per team, department or repository.
 
-Verzion solves how versioning is managed making it deterministic and consistent following Semantic Versioning.
+Verzion solves how versioning is managed making it deterministic and consistent following [Semantic Versioning](https://semver.org).
 
 ## How
 
