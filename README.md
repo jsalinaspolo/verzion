@@ -8,6 +8,22 @@ Most of the times, versioning between services and application in an organisatio
 
 Verzion solves how versioning is managed making it deterministic and consistent following [Semantic Versioning](https://semver.org).
 
+## Install
+
+> Linux
+```bash
+ curl -sSL https://github.com/jsalinaspolo/verzion/releases/download/v0.5.0/verzion_0.5.0_linux_amd64.tar.gz | tar -xz
+ chmod +x ./verzion
+./verzion -v
+```
+
+> MacOS
+```bash
+curl -sSL https://github.com/jsalinaspolo/verzion/releases/download/v0.5.0/verzion_0.5.0_darwin_amd64.tar.gz | tar -xz
+chmod +x ./verzion
+./verzion -v
+```
+
 ## How
 
 Verzion CLI prints out the next version to release as a string. It uses a VERSION file in the repository, but avoid having to update the file in each release. 
