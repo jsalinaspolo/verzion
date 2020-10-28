@@ -1,0 +1,31 @@
+# Configuration file for goreleaser
+# Make sure to check the documentation at http://goreleaser.com
+# To test locally without publishing to github but generating the binaries,
+# run $ goreleaser --snapshot --skip-publish --rm-dist
+
+project_name: verzion
+before:
+  hooks:
+    # You may remove this if you don't use go modules.
+    - go mod download
+    # you may remove this if you don't need go generate
+    #- go generate ./...
+builds:
+  - main: ./main.go
+    goos:
+      - darwin
+      - linux
+    goarch:
+      - amd64
+    ldflags:
+      - -X github.com/jsalinaspolo/verzion/internal/buildinfo.Version={{.Version}}
+env:
+  - CGO_ENABLED=0
+checksum:
+  name_template: "checksums.txt"
+changelog:
+  sort: asc
+  filters:
+    exclude:
+      - "^docs:"
+      - "^test:"

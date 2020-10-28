@@ -2,6 +2,7 @@ package cmd
 
 import (
 	"fmt"
+	"github.com/jsalinaspolo/verzion/internal/buildinfo"
 	"github.com/jsalinaspolo/verzion/internal/git"
 	"github.com/jsalinaspolo/verzion/internal/verzion"
 	"github.com/jsalinaspolo/verzion/pkg/verzioner"
@@ -65,6 +66,8 @@ func versionCmd() *cobra.Command {
 			version := viper.Get(versionFlag).(bool)
 
 			if version {
+				fmt.Println(buildinfo.Print())
+				return nil
 				// should print version
 			}
 
