@@ -74,7 +74,7 @@ func FromVersionFile(path string) (Verzion, error) {
 // FromString attempts to parse a Verzion from a string.
 func FromString(s string) (Verzion, error) {
 	regex := regexp.MustCompile(`^v?([0-9]+)\.([0-9]+)(\.([0-9]+))?(?:\+*\-*)([A-z0-9\-\.\+]*)`)
-	if regex.Match([]byte(s)) == false {
+	if !regex.Match([]byte(s)) {
 		return Verzion{}, fmt.Errorf("'%s' is not a valid Verzion", s)
 	}
 

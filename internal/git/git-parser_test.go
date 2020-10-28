@@ -45,10 +45,10 @@ b12b761f6332ea6de8b98f69921061b90a39379d refs/tags/v1.0.4
 ^8cc58fe566e5d0ef5cadaf456653ab764f1327fb`)
 		tempDir := t.TempDir()
 		folder := filepath.Join(tempDir, ".git")
-		os.MkdirAll(folder, os.ModePerm)
+		_ = os.MkdirAll(folder, os.ModePerm)
 		tmpFile := filepath.Join(folder, "packed-refs")
 
-		err := ioutil.WriteFile(tmpFile, input, 0666)
+		_ = ioutil.WriteFile(tmpFile, input, 0666)
 
 		v, err := FromPackedRefs(tempDir)
 		require.NoError(t, err)
@@ -64,10 +64,10 @@ b12b761f6332ea6de8b98f69921061b90a39379d refs/tags/v1.0.4
 
 		tempDir := t.TempDir()
 		folder := filepath.Join(tempDir, ".git")
-		os.MkdirAll(folder, os.ModePerm)
+		_ = os.MkdirAll(folder, os.ModePerm)
 		tmpFile := filepath.Join(folder, "packed-refs")
 
-		err := ioutil.WriteFile(tmpFile, input, 0666)
+		_ = ioutil.WriteFile(tmpFile, input, 0666)
 
 		v, err := FromPackedRefs(tempDir)
 		require.NoError(t, err)

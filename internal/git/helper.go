@@ -11,7 +11,7 @@ import (
 
 func StubHead(t *testing.T, tempDir string, input []byte) {
 	folder := filepath.Join(tempDir, ".git")
-	os.MkdirAll(folder, os.ModePerm)
+	_ = os.MkdirAll(folder, os.ModePerm)
 	tmpFile := filepath.Join(folder, "HEAD")
 	err := ioutil.WriteFile(tmpFile, input, 0666)
 	require.NoError(t, err)
@@ -19,7 +19,7 @@ func StubHead(t *testing.T, tempDir string, input []byte) {
 
 func StubRefsHead(t *testing.T, tempDir string, branch string, input []byte) {
 	folder := filepath.Join(tempDir, ".git", "refs", "heads")
-	os.MkdirAll(folder, os.ModePerm)
+	_ = os.MkdirAll(folder, os.ModePerm)
 	tmpFile := filepath.Join(folder, branch)
 	err := ioutil.WriteFile(tmpFile, input, 0666)
 	require.NoError(t, err)
@@ -30,7 +30,7 @@ func StubRefsTags(t *testing.T, tempDir string, tags []Tag) {
 	input := []byte(`078174542934ec4907a66cf334ed4c4eee744fa9`)
 
 	folder := filepath.Join(tempDir, ".git", "refs", "tags")
-	os.MkdirAll(folder, os.ModePerm)
+	_ = os.MkdirAll(folder, os.ModePerm)
 
 	if len(tags) > 0 {
 		for _, tag := range tags {
@@ -71,7 +71,7 @@ bf2b15cd5b04a142f51adb73ac4601251375bb88 refs/tags/v1.0.9
 ^3e8d1a24ed8d7dc827330be704254ccf5ac95a55`)
 
 	folder := filepath.Join(tempDir, ".git")
-	os.MkdirAll(folder, os.ModePerm)
+	_ = os.MkdirAll(folder, os.ModePerm)
 
 	tmpFile := filepath.Join(folder, "packed-refs")
 
