@@ -13,6 +13,7 @@ before:
 builds:
   - main: ./main.go
     goos:
+      - windows
       - darwin
       - linux
     goarch:
@@ -29,3 +30,11 @@ changelog:
     exclude:
       - "^docs:"
       - "^test:"
+archives:
+  -
+    id: "verzion"
+    builds: ['verzion']
+    format: tar.gz
+    format_overrides:
+      - goos: windows
+        format: zip
