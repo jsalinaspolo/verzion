@@ -20,7 +20,8 @@ If the commit has not been tagged, it will look at the tags and get the highest 
 
 Verzion allows `PATCH` versions by parameter `--patch [version]`. It will look for the tags containing the `version` parameter and get the highest, then increment the `PATCH` version.
 
-Verzion also allows metadata like adding the commit sha to the version using the flag `--sha` and branch name with using the flag `--branch`
+Verzion allows metadata by adding a parameter --metadata [metadata] or specific ones 
+like the commit sha using the flag `--sha` or branch name using the flag `--branch`
 
 The main documentation is the binary. `verzion -h`
 
