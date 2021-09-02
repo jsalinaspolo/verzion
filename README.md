@@ -12,21 +12,21 @@ Verzion solves how versioning is managed making it deterministic and consistent 
 
 > Linux
 ```bash
- curl -sSL https://github.com/jsalinaspolo/verzion/releases/download/v0.5.1/verzion_0.5.1_linux_amd64.tar.gz | tar -xz
+ curl -sSL https://github.com/jsalinaspolo/verzion/releases/download/v0.6.0/verzion_0.6.0_linux_amd64.tar.gz | tar -xz
  chmod +x ./verzion
 ./verzion -v
 ```
 
 > MacOS
 ```bash
-curl -sSL https://github.com/jsalinaspolo/verzion/releases/download/v0.5.1/verzion_0.5.1_darwin_amd64.tar.gz | tar -xz
+curl -sSL https://github.com/jsalinaspolo/verzion/releases/download/v0.6.0/verzion_0.6.0_darwin_amd64.tar.gz | tar -xz
 chmod +x ./verzion
 ./verzion -v
 ```
 
 > Windows
 
-Unzip https://github.com/jsalinaspolo/verzion/releases/download/v0.5.1/verzion_0.5.1_windows_amd64.zip
+Unzip https://github.com/jsalinaspolo/verzion/releases/download/v0.6.0/verzion_0.6.0_windows_amd64.zip
 
 Add the folder to your PATH
 
