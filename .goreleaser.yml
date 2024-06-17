@@ -1,7 +1,7 @@
 # Configuration file for goreleaser
 # Make sure to check the documentation at http://goreleaser.com
 # To test locally without publishing to github but generating the binaries,
-# run $ goreleaser --snapshot --skip-publish --rm-dist
+# run $ goreleaser --snapshot --skip=publish --clean
 
 project_name: verzion
 before:
